@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Company } from '../company';
+import { CompanyService } from '../company.service';
+import { Subscription, Observable } from 'rxjs';
+import { takeWhile, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-company-list',
@@ -8,20 +11,22 @@ import { Company } from '../company';
 })
 export class CompanyListComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private companyService: CompanyService
+    ) {}
 
-  companies: Company[];
+  companies$: Observable<Company[]>;
+
 
   ngOnInit() {
-    this.companies = this.getCompanies();
+    this.companies$ = this.companyService.getCompanies()
+      .pipe(
+        tap(x => console.log('GOT A VALUE', x))
+      );
   }
 
-  getCompanies(): Company[] {
-    return [
-      {name: 'Company A', phone: 123456, email: 'companyA@ssw.com.au'},
-      {name: 'Company B', phone: 456789, email: 'companyB@ssw.com.au'},
-      {name: 'Company C', phone: 789123, email: 'companyC@ssw.com.au'}
-    ];
-  }
+
+
+
 
 }
