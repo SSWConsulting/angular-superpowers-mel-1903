@@ -1,10 +1,11 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }} on {{ now | date:'dd/MM/yyyy' }}!
-  </h1>
-  <input type="text" [(ngModel)]="title" />
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand">FireBootCamp CRM</a>
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item" [routerLinkActive]="'active'">
+      <a class="nav-link" [routerLink]="['/company/list']">Companies</a>
+    </li>
+  </ul>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
 </div>
-
-<app-company-list></app-company-list>
-

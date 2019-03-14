@@ -1,6 +1,6 @@
 <div class="container">
 
-  <button class="btn btn-success float-right">Add</button>
+  <button class="btn btn-success float-right" [routerLink]="['/company/edit', 0]">Add</button>
 
   <app-company-table [companies]="companies$ | async" (deleteClicked)="deleteCompany($event)" ></app-company-table>
 
