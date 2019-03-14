@@ -15,7 +15,8 @@
     <td>{{ company.email }} </td>
     <td class="company-buttons">
       <button class="btn btn-warning">Edit</button>
-      <button class="btn btn-danger">Delete</button>
+      <button class="btn btn-danger"
+      (click)="deleteCompany(company)" >Delete</button>
     </td>
   </tr>
 </table>
