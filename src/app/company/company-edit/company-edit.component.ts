@@ -29,23 +29,33 @@ export class CompanyEditComponent implements OnInit {
     this.buildForm();
 
     if (!this.isNewCompany) {
-      // TODO:
-      // this.getCompany();
+      this.getCompany();
     }
+  }
+
+  getCompany(): void {
+    this.companyService.getCompany(this.companyId)
+      .subscribe(company => {
+        this.companyForm.patchValue(company);
+      });
   }
 
   buildForm(): void {
     this.companyForm = this.fb.group({
       name: ['', Validators.required],
       phone: [''],
-      email: [''],
+      email: ['default@email.com'],
     });
   }
 
   saveCompany(): void {
     if (this.isNewCompany) {
-      this.companyService.addCompany(this.companyForm.value)
-        .subscribe(() => this.router.navigate(['/company/list']));
+      this.companyService.addCompany(this.companyForm.value);
+      this.router.navigateByUrl('/company/list');
+    } else {
+      const newCompany = {...this.companyForm.value, id: this.companyId };
+      this.companyService.updateCompany(newCompany);
+      this.router.navigateByUrl('/company/list');
     }
   }
 }

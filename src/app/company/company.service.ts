@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Company } from './company';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -11,31 +11,51 @@ export class CompanyService {
 
   constructor(
     private httpClient: HttpClient
-  ) { }
+  ) {
+    this.loadCompanies();
+  }
 
   API_BASE = 'http://firebootcamp-crm-api.azurewebsites.net/api';
 
-  getCompanies(): Observable<Company[]> {
-    console.log('Running GET COMPANIES');
-    return this.httpClient.get<Company[]>(`${this.API_BASE}/company`)
-    .pipe(
-      catchError(this.handleError)
-    );
+  companies$: BehaviorSubject<Company[]> = new BehaviorSubject<Company[]>([]);
+
+  loadCompanies() {
+    this.httpClient.get<Company[]>(`${this.API_BASE}/company`)
+    .subscribe(c => this.companies$.next(c));
   }
 
-  deleteCompany(id: number): Observable<Company> {
+  getCompanies(): Observable<Company[]> {
+    console.log('Running GET COMPANIES');
+    return this.companies$;
+  }
+
+  deleteCompany(id: number) {
     console.log('Service - delete company called');
     return this.httpClient.delete<Company>(`${this.API_BASE}/company/${id}`)
     .pipe(
       catchError(this.handleError)
-    );
+    ).subscribe(c => this.loadCompanies());
   }
 
-  addCompany(company: Company): Observable<Company> {
+  addCompany(company: Company) {
     return this.httpClient.post<Company>(
       `${this.API_BASE}/company`, company, { headers: new HttpHeaders().set('content-type', 'application/json') }
     )
-    .pipe(catchError(this.handleError));
+    .pipe(catchError(this.handleError))
+    .subscribe(c => this.loadCompanies());
+  }
+
+  getCompany(companyId: number): Observable<Company> {
+    return this.httpClient.get(`${this.API_BASE}/company/${companyId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  updateCompany(company: Company) {
+    return this.httpClient.put(
+      `${this.API_BASE}/company/${company.id}`, company,
+      { headers: new HttpHeaders().set('content-type', 'application/json') }
+    ).pipe(catchError(this.handleError))
+    .subscribe(c => this.loadCompanies());
   }
 
   // TODO: Better error management (Generic)
